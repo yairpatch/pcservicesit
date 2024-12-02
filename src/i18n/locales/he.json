@@ -1,0 +1,153 @@
+{
+  "common": {
+    "loading": "טוען...",
+    "error": "שגיאה",
+    "success": "הצלחה",
+    "submit": "שלח",
+    "cancel": "ביטול",
+    "save": "שמור",
+    "delete": "מחק",
+    "edit": "ערוך",
+    "actions": "פעולות",
+    "search": "חיפוש",
+    "filter": "סינון",
+    "sort": "מיון",
+    "required": "שדה חובה"
+  },
+  "nav": {
+    "home": "דף הבית",
+    "services": "שירותים",
+    "tickets": "קריאות שירות",
+    "contact": "צור קשר",
+    "dashboard": "לוח בקרה",
+    "admin": "ניהול",
+    "login": "התחברות",
+    "logout": "התנתק"
+  },
+  "hero": {
+    "title": "שירותי תיקון מחשבים מקצועיים",
+    "subtitle": "פתרונות מהירים ואמינים לכל בעיות המחשב שלך",
+    "cta": "פתח קריאת שירות"
+  },
+  "services": {
+    "title": "השירותים שלנו",
+    "repair": "תיקון מחשבים",
+    "maintenance": "תחזוקה",
+    "upgrade": "שדרוג חומרה",
+    "virus": "הסרת וירוסים",
+    "data": "שחזור מידע",
+    "network": "פתרונות רשת"
+  },
+  "contact": {
+    "getInTouch": "צור קשר",
+    "description": "יש לך שאלות לגבי השירותים שלנו? אנחנו כאן לעזור. צור איתנו קשר באחת מהדרכים הבאות או מלא את הטופס למטה.",
+    "phone": "טלפון",
+    "email": "דוא״ל",
+    "address": "כתובת",
+    "addressLine": "רחוב טק 123, תל אביב, ישראל",
+    "hours": "שעות עבודה",
+    "workingHours": "ראשון-חמישי: 9:00-18:00, שישי: 9:00-14:00",
+    "name": "שם",
+    "message": "הודעה",
+    "send": "שלח הודעה"
+  },
+  "auth": {
+    "login": "התחברות",
+    "logout": "התנתק",
+    "email": "דואר אלקטרוני",
+    "password": "סיסמה",
+    "loginButton": "התחבר",
+    "loginError": "שגיאה בהתחברות",
+    "loginSuccess": "התחברת בהצלחה",
+    "unauthorized": "אין לך הרשאה לצפות בדף זה"
+  },
+  "ticket": {
+    "create": "פתיחת קריאה",
+    "track": "מעקב קריאה",
+    "id": "מספר קריאה",
+    "statusLabel": "סטטוס",
+    "description": "תיאור",
+    "priorityLabel": "עדיפות",
+    "customerName": "שם הלקוח",
+    "customerEmail": "דואר אלקטרוני",
+    "createdAt": "נוצר ב",
+    "updatedAt": "עודכן ב",
+    "anonymous": "אנונימי",
+    "submit": "שלח קריאה",
+    "response": "תגובה",
+    "addResponse": "הוסף תגובה",
+    "priorityLow": "נמוכה",
+    "priorityMedium": "בינונית",
+    "priorityHigh": "גבוהה",
+    "priorityUrgent": "דחוף",
+    "status": "סטטוס",
+    "priority": "עדיפות",
+    "statusNew": "חדש",
+    "statusInProgress": "בטיפול",
+    "statusResolved": "טופל",
+    "statusTypes": {
+      "open": "פתוח",
+      "in_progress": "בטיפול",
+      "resolved": "טופל"
+    },
+    "priorityTypes": {
+      "low": "נמוכה",
+      "medium": "בינונית",
+      "high": "גבוהה",
+      "urgent": "דחוף"
+    },
+    "form": {
+      "nameLabel": "שם מלא",
+      "namePlaceholder": "הכנס את שמך המלא",
+      "emailLabel": "דואר אלקטרוני",
+      "emailPlaceholder": "הכנס את כתובת הדואר האלקטרוני שלך",
+      "descriptionLabel": "תיאור הבעיה",
+      "descriptionPlaceholder": "תאר את הבעיה בפירוט",
+      "priorityLabel": "דחיפות",
+      "submitSuccess": "הקריאה נשלחה בהצלחה",
+      "submitError": "אירעה שגיאה בשליחת הקריאה",
+      "isAnonymous": "שלח קריאה אנונימית"
+    },
+    "title": "כותרת",
+    "actions": "פעולות"
+  },
+  "admin": {
+    "title": "ניהול קריאות",
+    "ticketList": "רשימת קריאות",
+    "noTickets": "אין קריאות",
+    "fetchError": "שגיאה בטעינת הקריאות",
+    "deleteError": "שגיאה במחיקת הקריאה",
+    "confirmDelete": "האם אתה בטוח שברצונך למחוק קריאה זו?",
+    "deleteTicket": "מחק קריאה",
+    "updateStatus": "עדכן סטטוס",
+    "updateSuccess": "הקריאה עודכנה בהצלחה",
+    "updateError": "שגיאה בעדכון הקריאה",
+    "ticketManagement": "ניהול קריאות שירות",
+    "search": "חיפוש קריאות",
+    "filterAll": "כל הקריאות",
+    "sortByDate": "מיין לפי תאריך",
+    "sortByPriority": "מיין לפי עדיפות",
+    "sortAscending": "▲",
+    "sortDescending": "▼",
+    "ascending": "סדר עולה",
+    "descending": "סדר יורד",
+    "filters": {
+      "all": "הכל",
+      "open": "פתוח",
+      "in_progress": "בטיפול",
+      "resolved": "טופל"
+    },
+    "sort": {
+      "createdAt": "תאריך יצירה",
+      "priority": "עדיפות",
+      "status": "סטטוס"
+    }
+  },
+  "errors": {
+    "required": "שדה חובה",
+    "invalidEmail": "כתובת דואר אלקטרוני לא תקינה",
+    "minLength": "אורך מינימלי הוא {{length}} תווים",
+    "maxLength": "אורך מקסימלי הוא {{length}} תווים",
+    "generic": "אירעה שגיאה, נסה שוב מאוחר יותר"
+  }
+}

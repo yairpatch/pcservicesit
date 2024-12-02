@@ -1,0 +1,83 @@
+{
+  "nav": {
+    "home": "Home",
+    "services": "Services",
+    "tickets": "Tickets",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "admin": "Admin Panel"
+  },
+  "hero": {
+    "title": "Professional PC Repair Services",
+    "subtitle": "Fast and reliable solutions for all your computer problems",
+    "cta": "Open Service Ticket"
+  },
+  "services": {
+    "title": "Our Services",
+    "repair": "PC Repair",
+    "maintenance": "Maintenance",
+    "upgrade": "Hardware Upgrade",
+    "virus": "Virus Removal",
+    "data": "Data Recovery",
+    "network": "Network Solutions"
+  },
+  "contact": {
+    "getInTouch": "Get in Touch",
+    "description": "Have questions about our services? We're here to help. Contact us through any of the following methods or fill out the form below.",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "addressLine": "123 Tech Street, Tel Aviv, Israel",
+    "hours": "Working Hours",
+    "workingHours": "Sunday-Thursday: 9:00-18:00, Friday: 9:00-14:00",
+    "name": "Name",
+    "message": "Message",
+    "send": "Send Message"
+  },
+  "ticket": {
+    "create": "Create Ticket",
+    "track": "Track Ticket",
+    "status": "Status",
+    "submit": "Submit",
+    "title": "Title",
+    "description": "Description",
+    "priority": "Priority",
+    "priorityLow": "Low Priority",
+    "priorityMedium": "Medium Priority",
+    "priorityHigh": "High Priority",
+    "yourTickets": "Your Tickets",
+    "noTickets": "No tickets found",
+    "statusNew": "New",
+    "statusInProgress": "In Progress",
+    "statusResolved": "Resolved",
+    "actions": "Actions",
+    "id": "Ticket ID",
+    "createdAt": "Created At"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "loginError": "Invalid email or password",
+    "logout": "Logout"
+  },
+  "admin": {
+    "ticketManagement": "Ticket Management",
+    "filterAll": "All Tickets",
+    "created": "Created",
+    "actions": "Actions",
+    "updateStatus": "Update Status",
+    "accessDenied": "Access Denied",
+    "search": "Search tickets",
+    "sortByDate": "Sort by Date",
+    "sortByPriority": "Sort by Priority",
+    "sortAscending": "",
+    "sortDescending": "",
+    "ascending": "Ascending",
+    "descending": "Descending"
+  },
+  "common": {
+    "loading": "Loading..."
+  }
+}
