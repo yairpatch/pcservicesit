@@ -7,6 +7,7 @@ import { ContactPage } from './pages/ContactPage';
 import { AdminPage } from './pages/AdminPage';
 import { SupportPage } from './pages/SupportPage';
 import { TrackTicketPage } from './pages/TrackTicketPage';
+import { ServicesPage } from './pages/ServicesPage';
 import { RtlProvider } from './components/RtlProvider';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import './i18n/i18n';
@@ -20,6 +21,7 @@ function App() {
           <main>
             <Routes>
               <Route path="/" element={<HomePage />} />
+              <Route path="/services" element={<ServicesPage />} />
               <Route path="/support" element={<SupportPage />} />
               <Route path="/track" element={<TrackTicketPage />} />
               <Route path="/tickets/*" element={<TicketsPage />} />

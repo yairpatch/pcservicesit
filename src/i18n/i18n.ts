@@ -14,8 +14,8 @@ i18n
       he: { translation: he },
       ru: { translation: ru }
     },
-    fallbackLng: 'he',
-    supportedLngs: ['he', 'en', 'ru'],
+    fallbackLng: 'en',
+    supportedLngs: ['en', 'he', 'ru'],
     interpolation: {
       escapeValue: false
     }

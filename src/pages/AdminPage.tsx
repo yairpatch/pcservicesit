@@ -21,6 +21,8 @@ interface TicketResponse {
   content: string;
   createdAt: string;
   adminId: string;
+  isUserResponse?: boolean;
+  readByAdmin?: boolean;
 }
 
 export function AdminPage() {
@@ -130,6 +132,37 @@ export function AdminPage() {
     }
   };
 
+  const getTicketIcon = (ticket: Ticket) => {
+    // Show notification badge if there are user responses
+    const hasNewUserResponses = ticket.responses?.some(
+      (response) => response.isUserResponse && !response.readByAdmin
+    );
+
+    if (hasNewUserResponses) {
+      return (
+        <div className="relative">
+          {getStatusIcon(ticket.status)}
+          <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
+        </div>
+      );
+    }
+
+    return getStatusIcon(ticket.status);
+  };
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case 'new':
+        return <AlertTriangle className="h-5 w-5 text-blue-500" />;
+      case 'in_progress':
+        return <Clock className="h-5 w-5 text-yellow-500" />;
+      case 'resolved':
+        return <CheckCircle className="h-5 w-5 text-green-500" />;
+      default:
+        return null;
+    }
+  };
+
   const sortedTickets = tickets
     .filter(ticket => 
       (filter === 'all' || ticket.status === filter) &&
@@ -148,19 +181,6 @@ export function AdminPage() {
       }
       return 0;
     });
-
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'new':
-        return <AlertTriangle className="h-5 w-5 text-blue-500" />;
-      case 'in_progress':
-        return <Clock className="h-5 w-5 text-yellow-500" />;
-      case 'resolved':
-        return <CheckCircle className="h-5 w-5 text-green-500" />;
-      default:
-        return null;
-    }
-  };
 
   if (loading) {
     return <div className="text-center py-8">{t('common.loading')}</div>;
@@ -208,25 +228,25 @@ export function AdminPage() {
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle">
             <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5">
-              <table className="min-w-full divide-y divide-gray-300">
+              <table className="min-w-full divide-y divide-gray-300" dir={t('direction')}>
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
                       {t('ticket.id')}
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
                       {t('ticket.title')}
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
                       {t('ticket.priority')}
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
                       {t('ticket.createdAt')}
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
                       {t('ticket.status')}
                     </th>
-                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
                       {t('ticket.actions')}
                     </th>
                   </tr>
@@ -239,12 +259,17 @@ export function AdminPage() {
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <div className="flex items-center">
-                          {getStatusIcon(ticket.status)}
+                          {getTicketIcon(ticket)}
                           <button
                             onClick={() => setSelectedTicket(ticket)}
-                            className="ml-2 text-sm font-medium text-gray-900 hover:text-blue-600"
+                            className={`${t('direction') === 'rtl' ? 'mr-2' : 'ml-2'} text-sm font-medium text-gray-900 hover:text-blue-600`}
                           >
                             {ticket.title}
+                            {ticket.responses?.some(r => r.isUserResponse && !r.readByAdmin) && (
+                              <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                {t('admin.newResponse')}
+                              </span>
+                            )}
                           </button>
                         </div>
                       </td>
@@ -254,14 +279,14 @@ export function AdminPage() {
                           ticket.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
                           'bg-green-100 text-green-800'
                         }`}>
-                          {ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}
+                          {t(`ticket.priority${ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}`)}
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {new Date(ticket.createdAt).toLocaleDateString()}
+                        {new Date(ticket.createdAt).toLocaleDateString(t('locale'))}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {ticket.status.replace('_', ' ').charAt(0).toUpperCase() + ticket.status.slice(1)}
+                        {t(`ticket.status${ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}`)}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm">
                         <select
@@ -269,13 +294,13 @@ export function AdminPage() {
                           onChange={(e) => handleStatusChange(ticket.id, e.target.value)}
                           className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                         >
-                          <option value="new">New</option>
-                          <option value="in_progress">In Progress</option>
-                          <option value="resolved">Resolved</option>
+                          <option value="new">{t('ticket.statusNew')}</option>
+                          <option value="in_progress">{t('ticket.statusInProgress')}</option>
+                          <option value="resolved">{t('ticket.statusResolved')}</option>
                         </select>
                         <button
                           onClick={() => handleDeleteTicket(ticket.id)}
-                          className="text-red-600 hover:text-red-900 ml-2"
+                          className={`text-red-600 hover:text-red-900 ${t('direction') === 'rtl' ? 'mr-2' : 'ml-2'}`}
                           title={t('admin.deleteTicket')}
                         >
                           <TrashIcon className="h-5 w-5" />

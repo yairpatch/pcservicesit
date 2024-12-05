@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
-import { getTicketById } from '../lib/firebase';
+import { getTicketById, addTicketResponse } from '../lib/firebase';
 
 interface Ticket {
   id: string;
@@ -17,6 +17,7 @@ interface Ticket {
     content: string;
     createdAt: string;
     adminId: string;
+    isUserResponse?: boolean;
   }[];
 }
 
@@ -28,6 +29,7 @@ export function TrackTicketPage() {
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [userResponse, setUserResponse] = useState('');
 
   useEffect(() => {
     const id = searchParams.get('id');
@@ -80,22 +82,70 @@ export function TrackTicketPage() {
   };
 
   const formatStatus = (status: string) => {
-    return status.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+    return t(`ticket.status${status.charAt(0).toUpperCase() + status.slice(1)}`);
+  };
+
+  const formatPriority = (priority: string) => {
+    return t(`ticket.priority${priority.charAt(0).toUpperCase() + priority.slice(1)}`);
+  };
+
+  const handleUserResponse = async () => {
+    if (!userResponse.trim() || !ticket) return;
+
+    try {
+      await addTicketResponse(ticket.id, {
+        content: userResponse,
+        userId: ticket.customerEmail,
+        createdAt: new Date().toISOString(),
+        isUserResponse: true
+      });
+
+      // Update local state
+      setTicket(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          responses: [...(prev.responses || []), {
+            id: Date.now().toString(),
+            content: userResponse,
+            userId: ticket.customerEmail,
+            createdAt: new Date().toISOString(),
+            isUserResponse: true
+          }]
+        };
+      });
+      setUserResponse('');
+    } catch (error) {
+      setError(t('track.responseError'));
+    }
+  };
+
+  const canUserRespond = () => {
+    if (!ticket?.responses || ticket.responses.length === 0) {
+      // If no responses yet, user cannot respond
+      return false;
+    }
+
+    // Get the last response
+    const lastResponse = ticket.responses[ticket.responses.length - 1];
+    
+    // User can only respond if the last response was from support (not a user response)
+    return !lastResponse.isUserResponse;
   };
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">Track Your Ticket</h1>
+        <h1 className="text-3xl font-bold text-gray-900 mb-4">{t('track.title')}</h1>
         <p className="text-lg text-gray-600">
-          Enter your ticket ID and email to check the status of your support request
+          {t('track.description')}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="max-w-md mx-auto space-y-6 mb-8">
         <div>
           <label htmlFor="ticketId" className="block text-sm font-medium text-gray-700">
-            Ticket ID
+            {t('track.ticketId')}
           </label>
           <input
             type="text"
@@ -108,7 +158,7 @@ export function TrackTicketPage() {
         </div>
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email Address
+            {t('track.email')}
           </label>
           <input
             type="email"
@@ -124,60 +174,96 @@ export function TrackTicketPage() {
           disabled={loading}
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
         >
-          {loading ? 'Loading...' : 'Track Ticket'}
+          {loading ? t('track.loading') : t('track.trackButton')}
         </button>
         {error && (
-          <p className="text-red-600 text-sm text-center">{error}</p>
+          <p className="text-red-600 text-sm text-center">{t(`track.${error === 'No ticket found with this ID' ? 'noTicket' : error === 'The email provided does not match the ticket' ? 'unauthorized' : 'error'}`)}</p>
         )}
       </form>
 
       {ticket && (
-        <div className="bg-white shadow rounded-lg overflow-hidden">
-          <div className="px-6 py-5 border-b border-gray-200">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-lg font-medium text-gray-900">{ticket.title}</h3>
-                <p className="mt-1 text-sm text-gray-500">Submitted by {ticket.customerName}</p>
-              </div>
-              <span className={`px-2 py-1 text-sm rounded-full ${getStatusColor(ticket.status)}`}>
-                {formatStatus(ticket.status)}
-              </span>
+        <div className="mt-8 bg-white shadow-sm rounded-lg p-6">
+          <div className="space-y-4">
+            <div>
+              <h3 className="text-lg font-medium text-gray-900">{t('track.ticketDetails')}</h3>
+              <dl className="mt-2 text-sm text-gray-500">
+                <div className="flex justify-between">
+                  <dt>{t('track.submittedBy')}</dt>
+                  <dd>{ticket.customerEmail}</dd>
+                </div>
+                <div className="flex justify-between mt-1">
+                  <dt>{t('track.status')}</dt>
+                  <dd>{formatStatus(ticket.status)}</dd>
+                </div>
+                <div className="flex justify-between mt-1">
+                  <dt>{t('track.priority')}</dt>
+                  <dd>{formatPriority(ticket.priority)}</dd>
+                </div>
+              </dl>
             </div>
-          </div>
-          <div className="px-6 py-5">
-            <div className="space-y-4">
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">Description</h4>
-                <p className="mt-1 text-sm text-gray-600">{ticket.description}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">Priority</h4>
-                <p className="mt-1 text-sm text-gray-600 capitalize">{ticket.priority}</p>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-900">Created</h4>
-                <p className="mt-1 text-sm text-gray-600">
-                  {new Date(ticket.createdAt).toLocaleString()}
-                </p>
-              </div>
+            
+            <div>
+              <h4 className="text-sm font-medium text-gray-900">{t('track.description')}</h4>
+              <p className="mt-2 text-sm text-gray-500">{ticket.description}</p>
             </div>
-          </div>
-          
-          {ticket.responses && ticket.responses.length > 0 && (
-            <div className="px-6 py-5 bg-gray-50">
-              <h4 className="text-sm font-medium text-gray-900 mb-4">Support Responses</h4>
-              <div className="space-y-4">
-                {ticket.responses.map((response) => (
-                  <div key={response.id} className="bg-white p-4 rounded-lg shadow-sm">
-                    <p className="text-sm text-gray-700">{response.content}</p>
-                    <p className="mt-2 text-xs text-gray-500">
-                      {new Date(response.createdAt).toLocaleString()}
-                    </p>
+
+            <div>
+              <h4 className="text-sm font-medium text-gray-900 mb-2">{t('track.responses')}</h4>
+              {ticket.responses && ticket.responses.length > 0 ? (
+                <div className="space-y-3">
+                  {ticket.responses.map((response) => (
+                    <div
+                      key={response.id}
+                      className={`p-4 rounded-lg ${
+                        response.isUserResponse
+                          ? 'bg-blue-50 ml-4'
+                          : 'bg-gray-50 mr-4'
+                      }`}
+                    >
+                      <p className="text-sm text-gray-700">{response.content}</p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        {response.isUserResponse ? t('track.you') : t('track.support')} -{' '}
+                        {new Date(response.createdAt).toLocaleDateString()}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-500">{t('track.noResponses')}</p>
+              )}
+
+              {canUserRespond() ? (
+                <div className="mt-4">
+                  <label htmlFor="userResponse" className="block text-sm font-medium text-gray-700">
+                    {t('track.yourResponse')}
+                  </label>
+                  <div className="mt-1">
+                    <textarea
+                      id="userResponse"
+                      rows={3}
+                      className="shadow-sm block w-full focus:ring-blue-500 focus:border-blue-500 sm:text-sm border border-gray-300 rounded-md"
+                      value={userResponse}
+                      onChange={(e) => setUserResponse(e.target.value)}
+                    />
                   </div>
-                ))}
-              </div>
+                  <div className="mt-2">
+                    <button
+                      onClick={handleUserResponse}
+                      className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                      {t('track.submitResponse')}
+                    </button>
+                  </div>
+                </div>
+              ) : ticket.responses && ticket.responses.length > 0 ? (
+                <div className="mt-4 p-4 bg-yellow-50 rounded-md">
+                  <p className="text-sm text-yellow-700">
+                    {t('track.waitingForSupport')}
+                  </p>
+                </div>
+              ) : null}
             </div>
-          )}
+          </div>
         </div>
       )}
     </div>

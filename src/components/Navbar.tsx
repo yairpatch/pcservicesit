@@ -62,7 +62,7 @@ export function Navbar() {
           <div className="flex">
             <Link to="/" className="flex items-center">
               <ComputerIcon className="h-8 w-8 text-blue-600" />
-              <span className="ml-2 text-xl font-bold">PC Services IT</span>
+              <span className="ml-2 text-xl font-bold">PC Services</span>
             </Link>
             
             <div className="hidden sm:ml-6 sm:flex sm:space-x-4">
