@@ -191,89 +191,89 @@ export function AdminPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8" dir={t('direction')}>
       <div className="sm:flex sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">{t('admin.ticketManagement')}</h1>
-        <div className="mt-4 sm:mt-0 flex space-x-4">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('admin.ticketManagement')}</h1>
+        <div className="mt-4 sm:mt-0 flex flex-col sm:flex-row gap-3 sm:gap-4">
           <div className="relative">
             <input
               type="text"
               placeholder={t('admin.search')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2 rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+              className="w-full sm:w-auto px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-            <Search className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
+            <Search className="absolute right-3 top-2.5 h-4 w-4 text-gray-400 rtl:left-3 rtl:right-auto" />
           </div>
           <select
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
-            className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="w-full sm:w-auto px-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            <option value="all">{t('admin.filterAll')}</option>
-            <option value="new">{t('ticket.statusNew')}</option>
-            <option value="in_progress">{t('ticket.statusInProgress')}</option>
-            <option value="resolved">{t('ticket.statusResolved')}</option>
+            <option value="all">{t('admin.filters.all')}</option>
+            <option value="new">{t('admin.filters.new')}</option>
+            <option value="in_progress">{t('admin.filters.in_progress')}</option>
+            <option value="resolved">{t('admin.filters.resolved')}</option>
           </select>
-          <button onClick={() => handleSort('createdAt')} className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
-            {t('admin.sortByDate')} {sortField === 'createdAt' && (sortDirection === 'asc' ? t('admin.sortAscending') : t('admin.sortDescending'))}
-          </button>
-          <button onClick={() => handleSort('priority')} className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600">
-            {t('admin.sortByPriority')} {sortField === 'priority' && (sortDirection === 'asc' ? t('admin.sortAscending') : t('admin.sortDescending'))}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => handleSort('createdAt')}
+              className="inline-flex items-center px-3 py-1.5 text-sm border rounded-md hover:bg-gray-50"
+            >
+              {t('admin.sort.date')}
+              <ArrowUpDown className="ml-1 rtl:mr-1 rtl:ml-0 h-4 w-4" />
+            </button>
+            <button
+              onClick={() => handleSort('priority')}
+              className="inline-flex items-center px-3 py-1.5 text-sm border rounded-md hover:bg-gray-50"
+            >
+              {t('admin.sort.priority')}
+              <ArrowUpDown className="ml-1 rtl:mr-1 rtl:ml-0 h-4 w-4" />
+            </button>
+          </div>
         </div>
       </div>
 
-      <div className="mt-8 flex flex-col">
+      {/* Desktop Table View */}
+      <div className="hidden sm:block mt-8">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle">
             <div className="overflow-hidden shadow-sm ring-1 ring-black ring-opacity-5">
               <table className="min-w-full divide-y divide-gray-300" dir={t('direction')}>
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
-                      {t('ticket.id')}
-                    </th>
-                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
+                    <th scope="col" className="py-3.5 pl-4 pr-3 text-start text-sm font-semibold text-gray-900">
                       {t('ticket.title')}
                     </th>
-                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 text-start text-sm font-semibold text-gray-900">
                       {t('ticket.priority')}
                     </th>
-                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
-                      {t('ticket.createdAt')}
-                    </th>
-                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 text-start text-sm font-semibold text-gray-900">
                       {t('ticket.status')}
                     </th>
-                    <th className="px-6 py-3 text-start text-sm font-semibold text-gray-900">
-                      {t('ticket.actions')}
+                    <th scope="col" className="px-3 py-3.5 text-start text-sm font-semibold text-gray-900">
+                      {t('ticket.createdAt')}
+                    </th>
+                    <th scope="col" className="relative py-3.5 pl-3 pr-4">
+                      <span className="sr-only">{t('admin.actions')}</span>
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {sortedTickets.map((ticket) => (
-                    <tr key={ticket.id}>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {ticket.id}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4">
+                    <tr key={ticket.id} className="hover:bg-gray-50">
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm">
                         <div className="flex items-center">
                           {getTicketIcon(ticket)}
                           <button
                             onClick={() => setSelectedTicket(ticket)}
-                            className={`${t('direction') === 'rtl' ? 'mr-2' : 'ml-2'} text-sm font-medium text-gray-900 hover:text-blue-600`}
+                            className="ms-2 font-medium text-gray-900 hover:text-blue-600"
                           >
                             {ticket.title}
-                            {ticket.responses?.some(r => r.isUserResponse && !r.readByAdmin) && (
-                              <span className="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                {t('admin.newResponse')}
-                              </span>
-                            )}
                           </button>
                         </div>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm">
                         <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
                           ticket.priority === 'high' ? 'bg-red-100 text-red-800' :
                           ticket.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
@@ -282,26 +282,24 @@ export function AdminPage() {
                           {t(`ticket.priority${ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}`)}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {new Date(ticket.createdAt).toLocaleDateString(t('locale'))}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {t(`ticket.status${ticket.status.charAt(0).toUpperCase() + ticket.status.slice(1)}`)}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm">
+                      <td className="whitespace-nowrap px-3 py-4 text-sm">
                         <select
                           value={ticket.status}
                           onChange={(e) => handleStatusChange(ticket.id, e.target.value)}
-                          className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                          className="rounded border-gray-300 text-sm focus:border-blue-500 focus:ring-blue-500"
                         >
                           <option value="new">{t('ticket.statusNew')}</option>
                           <option value="in_progress">{t('ticket.statusInProgress')}</option>
                           <option value="resolved">{t('ticket.statusResolved')}</option>
                         </select>
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {new Date(ticket.createdAt).toLocaleDateString(t('locale'))}
+                      </td>
+                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-end text-sm font-medium">
                         <button
                           onClick={() => handleDeleteTicket(ticket.id)}
-                          className={`text-red-600 hover:text-red-900 ${t('direction') === 'rtl' ? 'mr-2' : 'ml-2'}`}
-                          title={t('admin.deleteTicket')}
+                          className="text-red-600 hover:text-red-900"
                         >
                           <TrashIcon className="h-5 w-5" />
                         </button>
@@ -315,9 +313,70 @@ export function AdminPage() {
         </div>
       </div>
 
+      {/* Mobile Card View */}
+      <div className="sm:hidden mt-6 space-y-4">
+        {sortedTickets.map((ticket) => (
+          <div
+            key={ticket.id}
+            className="bg-white rounded-lg shadow-sm border p-4"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex items-start space-x-3 rtl:space-x-reverse">
+                <div className="flex-shrink-0">
+                  {getTicketIcon(ticket)}
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-gray-900">
+                    {ticket.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500 line-clamp-2">
+                    {ticket.description}
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100">
+                      {new Date(ticket.createdAt).toLocaleDateString(t('locale'))}
+                    </span>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs ${
+                      ticket.priority === 'high' ? 'bg-red-100 text-red-800' :
+                      ticket.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-green-100 text-green-800'
+                    }`}>
+                      {t(`ticket.priority${ticket.priority.charAt(0).toUpperCase() + ticket.priority.slice(1)}`)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="mt-4 flex justify-between items-center">
+              <select
+                value={ticket.status}
+                onChange={(e) => handleStatusChange(ticket.id, e.target.value)}
+                className="text-sm border rounded px-2 py-1.5 bg-white focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="new">{t('ticket.statusNew')}</option>
+                <option value="in_progress">{t('ticket.statusInProgress')}</option>
+                <option value="resolved">{t('ticket.statusResolved')}</option>
+              </select>
+              <button
+                onClick={() => handleDeleteTicket(ticket.id)}
+                className="p-2 text-red-600 hover:bg-red-50 rounded-md"
+              >
+                <TrashIcon className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {sortedTickets.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-gray-500">{t('admin.noTickets')}</p>
+        </div>
+      )}
+
       {/* Ticket Details Modal */}
       {selectedTicket && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <div className="flex justify-between items-start">
@@ -338,8 +397,13 @@ export function AdminPage() {
               <div className="mt-6">
                 <h3 className="font-medium text-gray-900">{t('admin.responses')}</h3>
                 <div className="mt-2 space-y-4">
-                  {selectedTicket.responses?.map((response) => (
-                    <div key={response.id} className="bg-gray-50 p-4 rounded-lg">
+                  {selectedTicket.responses?.map((response, index) => (
+                    <div
+                      key={index}
+                      className={`p-4 rounded-lg ${
+                        response.isUserResponse ? 'bg-blue-50' : 'bg-gray-50'
+                      }`}
+                    >
                       <p className="text-gray-600">{response.content}</p>
                       <p className="mt-2 text-sm text-gray-500">
                         {new Date(response.createdAt).toLocaleString()}
@@ -362,7 +426,8 @@ export function AdminPage() {
                 />
                 <button
                   onClick={() => handleResponse(selectedTicket.id)}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                  disabled={!response.trim()}
+                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
                 >
                   {t('admin.submit')}
                 </button>

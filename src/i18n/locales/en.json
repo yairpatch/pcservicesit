@@ -113,6 +113,18 @@
     "actions": "Actions",
     "updateStatus": "Update Status",
     "accessDenied": "Access Denied",
+    "filters": {
+      "all": "All Tickets",
+      "new": "New",
+      "in_progress": "In Progress",
+      "resolved": "Resolved"
+    },
+    "sort": {
+      "date": "Sort by Date",
+      "priority": "Sort by Priority",
+      "ascending": "Ascending",
+      "descending": "Descending"
+    },
     "sortByDate": "Sort by Date",
     "sortByPriority": "Sort by Priority",
     "sortAscending": "↑",
