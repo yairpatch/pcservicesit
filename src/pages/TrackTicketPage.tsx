@@ -95,7 +95,7 @@ export function TrackTicketPage() {
     try {
       await addTicketResponse(ticket.id, {
         content: userResponse,
-        userId: ticket.customerEmail,
+        adminId: ticket.customerEmail,
         createdAt: new Date().toISOString(),
         isUserResponse: true
       });
@@ -108,7 +108,7 @@ export function TrackTicketPage() {
           responses: [...(prev.responses || []), {
             id: Date.now().toString(),
             content: userResponse,
-            userId: ticket.customerEmail,
+            adminId: ticket.customerEmail,
             createdAt: new Date().toISOString(),
             isUserResponse: true
           }]

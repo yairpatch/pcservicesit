@@ -12,7 +12,8 @@
     "search": "חיפוש",
     "filter": "סינון",
     "sort": "מיון",
-    "required": "שדה חובה"
+    "required": "שדה חובה",
+    "close": "סגור"
   },
   "nav": {
     "home": "דף הבית",

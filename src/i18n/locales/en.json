@@ -148,6 +148,10 @@
     "description": "Fill out the form below and we'll get back to you as soon as possible."
   },
   "common": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "close": "Close",
+    "cancel": "Cancel"
   }
 }

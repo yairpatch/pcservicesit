@@ -38,6 +38,7 @@ export function AdminPage() {
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [response, setResponse] = useState('');
+  const [newResponse, setNewResponse] = useState('');
 
   useEffect(() => {
     const fetchTickets = async () => {
@@ -127,6 +128,38 @@ export function AdminPage() {
       }));
       
       setResponse('');
+    } catch (error) {
+      console.error('Error adding response:', error);
+    }
+  };
+
+  const handleAddResponse = async (ticketId: string) => {
+    if (!newResponse.trim() || !user) return;
+    
+    try {
+      await addTicketResponse(ticketId, {
+        content: newResponse,
+        adminId: user.uid,
+        createdAt: new Date().toISOString(),
+      });
+      
+      // Update local state
+      setTickets(tickets.map(ticket => {
+        if (ticket.id === ticketId) {
+          return {
+            ...ticket,
+            responses: [...(ticket.responses || []), {
+              id: Date.now().toString(),
+              content: newResponse,
+              adminId: user.uid,
+              createdAt: new Date().toISOString(),
+            }],
+          };
+        }
+        return ticket;
+      }));
+      
+      setNewResponse('');
     } catch (error) {
       console.error('Error adding response:', error);
     }
@@ -327,7 +360,9 @@ export function AdminPage() {
                 </div>
                 <div>
                   <h3 className="text-sm font-medium text-gray-900">
-                    {ticket.title}
+                    <button onClick={() => setSelectedTicket(ticket)}>
+                      {ticket.title}
+                    </button>
                   </h3>
                   <p className="mt-1 text-sm text-gray-500 line-clamp-2">
                     {ticket.description}
@@ -368,68 +403,70 @@ export function AdminPage() {
         ))}
       </div>
 
-      {sortedTickets.length === 0 && (
-        <div className="text-center py-12">
-          <p className="text-gray-500">{t('admin.noTickets')}</p>
-        </div>
-      )}
-
-      {/* Ticket Details Modal */}
+      {/* Ticket Detail Modal */}
       {selectedTicket && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-start">
-                <h2 className="text-xl font-bold text-gray-900">{selectedTicket.title}</h2>
-                <button
-                  onClick={() => setSelectedTicket(null)}
-                  className="text-gray-400 hover:text-gray-500"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-              
-              <div className="mt-4">
-                <h3 className="font-medium text-gray-900">{t('ticket.description')}</h3>
-                <p className="mt-2 text-gray-600">{selectedTicket.description}</p>
-              </div>
-
-              <div className="mt-6">
-                <h3 className="font-medium text-gray-900">{t('admin.responses')}</h3>
-                <div className="mt-2 space-y-4">
-                  {selectedTicket.responses?.map((response, index) => (
-                    <div
-                      key={index}
-                      className={`p-4 rounded-lg ${
-                        response.isUserResponse ? 'bg-blue-50' : 'bg-gray-50'
-                      }`}
-                    >
-                      <p className="text-gray-600">{response.content}</p>
-                      <p className="mt-2 text-sm text-gray-500">
-                        {new Date(response.createdAt).toLocaleString()}
+        <div className="fixed inset-0 z-50 overflow-y-auto">
+          <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+            <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+              <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mt-3 text-center sm:mt-0 sm:text-left w-full">
+                    <h3 className="text-lg font-semibold leading-6 text-gray-900 mb-4">
+                      {selectedTicket.title}
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500 mb-4">
+                        {selectedTicket.description}
                       </p>
+                      <div className="space-y-4">
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-900 mb-2">
+                            {t('admin.responses')}
+                          </h4>
+                          {selectedTicket.responses?.map((response, index) => (
+                            <div key={index} className="bg-gray-50 rounded-lg p-3 mb-2">
+                              <p className="text-sm text-gray-700">{response.content}</p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {new Date(response.createdAt).toLocaleDateString(t('locale'))}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-900 mb-2">
+                            {t('admin.addResponse')}
+                          </h4>
+                          <div className="mt-2">
+                            <textarea
+                              rows={3}
+                              value={newResponse}
+                              onChange={(e) => setNewResponse(e.target.value)}
+                              placeholder={t('admin.typeResponse')}
+                              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                          <div className="mt-3">
+                            <button
+                              onClick={() => handleAddResponse(selectedTicket.id)}
+                              disabled={!newResponse.trim()}
+                              className="inline-flex justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {t('admin.send')}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                  ))}
+                  </div>
                 </div>
               </div>
-
-              <div className="mt-6">
-                <label htmlFor="response" className="block font-medium text-gray-900">
-                  {t('admin.addResponse')}
-                </label>
-                <textarea
-                  id="response"
-                  rows={3}
-                  value={response}
-                  onChange={(e) => setResponse(e.target.value)}
-                  className="mt-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                />
+              <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
-                  onClick={() => handleResponse(selectedTicket.id)}
-                  disabled={!response.trim()}
-                  className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
+                  type="button"
+                  onClick={() => setSelectedTicket(null)}
+                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                 >
-                  {t('admin.submit')}
+                  {t('common.close')}
                 </button>
               </div>
             </div>
